@@ -4,6 +4,7 @@ from app.logica import crear_lote, crear_receta_desde_consola
 from app.logica import crear_lote_interactivo
 from datetime import date
 from app.logica import crear_lote, crear_receta_desde_consola, mostrar_resumen_lotes
+from app.estadisticas import obtener_estadisticas_lotes
 
 
 def mostrar_ingredientes(inventario):
@@ -75,6 +76,7 @@ def main():
         print("2. Crear receta nueva")
         print("3. Salir")
         print("4. Ver resumen de lotes")
+        print("5. Ver estadísticas generales")
         opcion = input("Selecciona una opción: ")
 
         if opcion == "1":
@@ -87,6 +89,8 @@ def main():
             break
         elif opcion == "4":
             mostrar_resumen_lotes()
+        elif opcion == "5":
+            obtener_estadisticas_lotes()
         else:
             print("Opción inválida")
 
