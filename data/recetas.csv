@@ -1,0 +1,35 @@
+nombre,litros_objetivo,ingrediente,cantidad,tipo,precio_unitario
+Proyecto 3,55.0,Lúpulo Cascade,50.0,Lúpulo,120.0
+Proyecto 3,55.0,Levadura S-04,5.0,Levadura,6000.0
+Proyecto 3,55.0,Agua,70.0,Agua,0.0
+1,10.0,Lúpulo Cascade,55.0,Lúpulo,120.0
+1,10.0,Levadura S-04,5.0,Levadura,6000.0
+1,10.0,Agua,70.0,Agua,0.0
+Proyecto_6,55.0,Malta Pale,9.0,Malta,4500.0
+Proyecto_6,55.0,Lúpulo Cascade,55.0,Lúpulo,120.0
+Proyecto_6,55.0,Levadura S-04,5.0,Levadura,6000.0
+Proyecto_6,55.0,Agua,70.0,Agua,0.0
+Proyecto_7,55.0,Malta Pale,9.0,Malta,4500.0
+Proyecto_7,55.0,Lúpulo Cascade,50.0,Lúpulo,120.0
+Proyecto_7,55.0,Levadura S-04,2.0,Levadura,6000.0
+Proyecto_7,55.0,Agua,70.0,Agua,0.0
+Pale Ale Honey,50.0,Malta Pale,9.0,Malta,8000.0
+Pale Ale Honey,50.0,Malta Caramel Hell,0.5,Malta,9800.0
+Pale Ale Honey,50.0,Lupulo Cascade,70.0,Lupulo,120.0
+Pale Ale Honey,50.0,Lupulo Magnum,30.0,Lupulo,140.0
+Pale Ale Honey,50.0,Levadura S-04,11.0,Levadura,3000.0
+Pale Ale Honey,50.0,Agua,70.0,Agua,1000.0
+Pale Ale Honey,50.0,Clarificante,1.0,Otros,2000.0
+IPA Tropical,50.0,Malta Pale,9.0,Malta,8000.0
+IPA Tropical,50.0,Malta Caramel Hell,0.5,Malta,9800.0
+IPA Tropical,50.0,Lupulo Cascade,60.0,Lupulo,120.0
+IPA Tropical,50.0,Lupulo Magnum,50.0,Lupulo,140.0
+IPA Tropical,50.0,Levadura S-04,11.0,Levadura,3000.0
+IPA Tropical,50.0,Agua,70.0,Agua,1000.0
+IPA Tropical,50.0,Clarificante,1.0,Otros,2000.0
+Pale Ale Honey,50.0,Malta Pale,10.0,Malta,8000.0
+Pale Ale Honey,50.0,Malta Caramel Hell,1.0,Malta,9800.0
+Pale Ale Honey,50.0,Lupulo Cascade,50.0,Lupulo,120.0
+Pale Ale Honey,50.0,Levadura S-04,11.0,Levadura,3000.0
+Pale Ale Honey,50.0,Agua,70.0,Agua,1000.0
+Pale Ale Honey,50.0,Clarificante,1.0,Otros,2000.0
