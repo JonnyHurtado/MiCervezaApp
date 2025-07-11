@@ -1,167 +1,165 @@
-from app.modelo import Ingrediente, Receta, Lote
+from app.modelo import Receta, Lote, Ingrediente
 from app import datos
-from app.datos_lotes import guardar_lote_csv
-from app.datos import guardar_receta_en_csv
 from datetime import date
 
-inventario = datos.cargar_ingredientes()
-recetas = []
-lotes = []
+def crear_receta_desde_consola(inventario):
+    nombre = input("\n🧪 Nombre de la nueva receta: ")
+    litros = float(input("🎯 Litros objetivo: "))
+    receta = Receta(nombre, litros)
 
-def registrar_ingrediente(nombre, tipo, unidad, cantidad, precio_unitario):
-    ing = Ingrediente(nombre, tipo, unidad, cantidad, precio_unitario)
-    inventario.append(ing)
-    datos.guardar_ingredientes(inventario)
-    return ing
+    while True:
+        print("\nIngredientes disponibles:")
+        for i, ing in enumerate(inventario, start=1):
+            print(f"{i}. {ing.nombre} ({ing.tipo}) - Stock: {ing.stock} {ing.unidad}")
 
-def buscar_ingrediente(nombre):
-    for i in inventario:
-        if i.nombre == nombre:
-            return i
-    raise ValueError(f"Ingrediente '{nombre}' no encontrado")
+        seleccion = input("Selecciona el número del ingrediente a agregar (o 'fin' para terminar): ")
+        if seleccion.lower() == "fin":
+            break
 
-def crear_receta(nombre, litros_objetivo, ingredientes_usados):
-    receta = Receta(nombre, litros_objetivo)
-    for nombre_ing, cantidad in ingredientes_usados:
-        ing = buscar_ingrediente(nombre_ing)
-        receta.agregar_ingrediente(ing, cantidad)
-    recetas.append(receta)
+        try:
+            idx = int(seleccion) - 1
+            if 0 <= idx < len(inventario):
+                ingrediente = inventario[idx]
+                cantidad = float(input(f"Cantidad de {ingrediente.unidad} a usar: "))
+                receta.agregar_ingrediente(ingrediente, cantidad)
+                ingrediente.stock -= cantidad
+            else:
+                print("❌ Selección fuera de rango.")
+        except ValueError:
+            print("❌ Entrada inválida.")
+
+    print("\n✅ Receta creada con éxito:")
+    for i in receta.ingredientes:
+        print(f"  - {i.ingrediente.nombre} ({i.ingrediente.tipo}) - {i.cantidad} {i.ingrediente.unidad}")
+
     return receta
 
-def crear_lote(receta, fecha, densidad_inicial, densidad_final, litros_embotellados):
-    lote = Lote(receta, fecha, densidad_inicial, densidad_final, litros_embotellados)
-    lotes.append(lote)
-    guardar_lote_csv(lote)  # <-- NUEVA línea
-    return lote
+def crear_lote_interactivo(receta):
+    fecha = input("\n📅 Fecha del lote (YYYY-MM-DD) [presiona ENTER para usar hoy]: ")
+    if not fecha:
+        fecha = str(date.today())
+
+    try:
+        og = float(input("🔬 Densidad inicial (OG): "))
+        fg = float(input("🧪 Densidad final (FG): "))
+
+        if og > 2: og /= 1000
+        if fg > 2: fg /= 1000
+
+        litros = float(input("🍾 Litros embotellados: "))
+        lote = Lote(receta, fecha, og, fg, litros)
+        datos.guardar_lote(lote)
+
+        print("\n✅ Lote creado exitosamente")
+        print(f"Nombre: {receta.nombre}")
+        print(f"ABV: {lote.calcular_abv():.2f}%")
+        print(f"Costo total: {receta.calcular_costo_total():,.2f}")
+        print(f"Costo por litro: {receta.calcular_costo_por_litro():,.2f}")
+
+    except ValueError:
+        print("❌ Entrada inválida.")
 
 def mostrar_resumen_lotes():
-    from app.datos_lotes import cargar_lotes_csv
-    lotes_guardados = cargar_lotes_csv()
-
-    if not lotes_guardados:
+    lotes = datos.cargar_lotes()
+    if not lotes:
         print("\n📭 No hay lotes registrados todavía.")
         return
 
     print("\n📦 RESUMEN DE LOTES PRODUCIDOS")
     print("-" * 40)
-    for lote in lotes_guardados:
+    for lote in lotes:
         print(f"Nombre receta: {lote.receta.nombre}")
         print(f"Fecha cocción: {lote.fecha}")
         print(f"Litros embotellados: {lote.litros_embotellados}")
-        print(f"ABV (%): {lote.calcular_abv()}")
+        print(f"ABV (%): {lote.calcular_abv():.2f}")
         print(f"Costo total receta: {lote.receta.calcular_costo_total():,.2f}")
         print(f"Costo por litro: {lote.receta.calcular_costo_por_litro():,.2f}")
         print("-" * 40)
 
-def crear_receta_desde_consola(inventario):
-    nombre = input("Nombre de la receta: ")
-    litros = float(input("Litros objetivo: "))
-    receta = Receta(nombre, litros)
-
-    while True:
-        print("\nIngredientes disponibles:")
-        for idx, ing in enumerate(inventario):
-            print(f"{idx + 1}. {ing.nombre} ({ing.tipo}) - Stock: {ing.stock} {ing.unidad}")
-
-        opcion = input("Selecciona el número del ingrediente a agregar (o 'fin' para terminar): ")
-
-        if opcion.lower() == "fin":
-            break
-
-        try:
-            idx = int(opcion) - 1
-            if 0 <= idx < len(inventario):
-                cantidad = float(input(f"Cantidad de {inventario[idx].unidad} a usar: "))
-                receta.agregar_ingrediente(inventario[idx], cantidad)
-            else:
-                print("❌ Opción inválida.")
-        except ValueError:
-            print("❌ Entrada inválida. Intenta de nuevo.")
-
-    print("\n✅ Receta creada con éxito:")
-    for ing, cant in receta.ingredientes:
-        print(f"  - {ing.nombre} ({ing.tipo}) - {cant} {ing.unidad}")
-
-    guardar_receta_en_csv(receta)  # <--- esta línea guarda en CSV correctamente
-    return receta
-
-# Dentro de la función crear_receta_desde_consola
-    ...
-    print("\n✅ Receta creada con éxito:")
-    for ing, cant in receta.ingredientes:
-        print(f"  - {ing.nombre} ({ing.tipo}) - {cant}")
-
-    guardar_receta_en_csv(receta)  # <--- esta línea guarda en CSV
-    return receta
-
-def crear_lote_interactivo(receta):
-    fecha_input = input("📅 Fecha del lote (YYYY-MM-DD) [presiona ENTER para usar hoy]: ")
-    if fecha_input.strip() == "":
-        fecha = str(date.today())
-    else:
-        fecha = fecha_input
-
-    # Captura y corrección de densidades
-    og_input = input("🔬 Densidad inicial (OG): ")
-    fg_input = input("🧪 Densidad final (FG): ")
-
-    try:
-        og = float(og_input)
-        fg = float(fg_input)
-
-        # Si el usuario puso 1040 en lugar de 1.040, lo corregimos
-        if og > 2:
-            og /= 1000
-        if fg > 2:
-            fg /= 1000
-    except ValueError:
-        print("❌ Densidad no válida. Usa formato decimal (ej: 1.040)")
-        return
-
-    litros_embotellados = float(input("🍾 Litros embotellados: "))
-    lote = crear_lote(receta, fecha, og, fg, litros_embotellados)
-
-    print("\n✅ Lote creado exitosamente")
-    print(f"Nombre: {receta.nombre}")
-    print(f"ABV: {lote.calcular_abv()}%")
-    print(f"Costo total: {receta.calcular_costo_total():,.2f}")
-    print(f"Costo por litro: {receta.calcular_costo_por_litro():,.2f}")
-
 def mostrar_estadisticas_generales():
-    from app.datos_lotes import cargar_lotes_csv
-
-    lotes = cargar_lotes_csv()
-    if not lotes:
-        print("\n📭 No hay lotes registrados para mostrar estadísticas.")
+    from app.estadisticas import obtener_estadisticas_lotes
+    estadisticas = obtener_estadisticas_lotes()
+    if not estadisticas:
+        print("\n📭 No hay datos suficientes para mostrar estadísticas.")
         return
-
-    total_lotes = len(lotes)
-    total_litros = sum(l.litros_embotellados for l in lotes)
-    promedio_abv = sum(l.calcular_abv() for l in lotes) / total_lotes
 
     print("\n📊 ESTADÍSTICAS GENERALES")
-    print("-" * 40)
-    print(f"Total de lotes: {total_lotes}")
-    print(f"Litros totales embotellados: {total_litros}")
-    print(f"ABV promedio: {promedio_abv:.2f}%")
-    print("-" * 40)
-
-import subprocess
+    print(f"Total de lotes: {estadisticas['total_lotes']}")
+    print(f"Promedio de ABV: {estadisticas['promedio_abv']:.2f}%")
+    print(f"Promedio de costo por litro: {estadisticas['promedio_costo_litro']:,.2f}")
+    print(f"Total litros embotellados: {estadisticas['total_litros']}")
 
 def sincronizar_con_github():
-    print("\n🔄 Guardando y sincronizando con GitHub...")
+    import os
+    import subprocess
 
+    print("\n🔄 Sincronizando con GitHub...")
     try:
-        # Agregar todos los cambios
         subprocess.run(["git", "add", "."], check=True)
-
-        # Confirmar los cambios
-        subprocess.run(["git", "commit", "-m", "sync changes"], check=True)
-
-        # Subir los cambios
+        subprocess.run(["git", "commit", "-m", "Cambios sincronizados desde app cervecera"], check=True)
+        subprocess.run(["git", "pull", "--rebase"], check=True)
         subprocess.run(["git", "push"], check=True)
-
         print("✅ Cambios sincronizados con éxito.")
-    except subprocess.CalledProcessError as e:
-        print("❌ Ocurrió un error al sincronizar con GitHub.")
-        print(e)
+    except subprocess.CalledProcessError:
+        print("❌ Error al sincronizar con GitHub. Verifica tu conexión y configuración.")
+
+def agregar_ingrediente_interactivo(inventario):
+    print("\n🆕 Agregar nuevo ingrediente al inventario")
+
+    # Mostrar ingredientes existentes para evitar duplicados
+    if inventario:
+        print("\n📦 Ingredientes existentes:")
+        for i, ing in enumerate(inventario, start=1):
+            print(f"{i}. {ing.nombre} ({ing.tipo}) - {ing.unidad}, Stock: {ing.stock}")
+    else:
+        print("⚠️ Aún no hay ingredientes en el inventario.")
+
+    respuesta = input("\n¿Quieres agregar stock a un ingrediente existente? (s/n): ").strip().lower()
+
+    if respuesta == "s":
+        try:
+            seleccion = int(input("Selecciona el número del ingrediente: "))
+            if 1 <= seleccion <= len(inventario):
+                ing = inventario[seleccion - 1]
+                cantidad = float(input(f"Cantidad a sumar a '{ing.nombre}' ({ing.unidad}): "))
+                ing.stock += cantidad
+                datos.guardar_ingredientes(inventario)
+                print(f"✅ Nuevo stock de {ing.nombre}: {ing.stock}")
+                return
+            else:
+                print("❌ Número fuera de rango.")
+                return
+        except ValueError:
+            print("❌ Entrada inválida.")
+            return
+
+    # Si desea agregar uno nuevo
+    nombre = input("Nombre del nuevo ingrediente: ").strip()
+    
+    tipos_validos = ["Malta", "Lupulo", "Levadura", "Agua", "ManoObra", "Packing", "Branding", "Energía", "Otros"]
+    print("\nTipos disponibles:")
+    for i, t in enumerate(tipos_validos, start=1):
+        print(f"{i}. {t}")
+    
+    try:
+        tipo_index = int(input("Selecciona el número del tipo: "))
+        tipo = tipos_validos[tipo_index - 1]
+        unidad = input("Unidad de medida (g, kg, l, unidad, etc): ")
+        cantidad = float(input(f"Cantidad inicial ({unidad}): "))
+        precio = float(input(f"Precio por {unidad}: "))
+
+        # Validar si ya existe un ingrediente con mismo nombre y unidad
+        for ing in inventario:
+            if ing.nombre.lower() == nombre.lower() and ing.unidad == unidad:
+                print("⚠️ Ya existe un ingrediente con ese nombre y unidad.")
+                return
+
+        nuevo = Ingrediente(nombre, tipo, unidad, cantidad, precio)
+        inventario.append(nuevo)
+        datos.guardar_ingredientes(inventario)
+        print("✅ Ingrediente agregado exitosamente.")
+
+    except (ValueError, IndexError):
+        print("❌ Entrada inválida.")
+
+

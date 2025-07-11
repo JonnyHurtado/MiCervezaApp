@@ -3,13 +3,14 @@ from app.modelo import Ingrediente
 
 ARCHIVO_INGREDIENTES = "ingredientes.csv"
 
+
 def guardar_ingredientes(inventario):
-    with open(ARCHIVO_INGREDIENTES, mode="w", newline="", encoding="utf-8") as archivo:
+    with open("data/ingredientes.csv", "w", newline="") as archivo:
         escritor = csv.writer(archivo)
-        escritor.writerow(["nombre", "tipo", "unidad", "cantidad", "precio_unitario"])
+        escritor.writerow(["nombre", "tipo", "unidad", "stock", "precio_unitario"])
         for ing in inventario:
             escritor.writerow([
-                ing.nombre, ing.tipo, ing.unidad, ing.cantidad, ing.precio_unitario
+                ing.nombre, ing.tipo, ing.unidad, ing.stock, ing.precio_unitario
             ])
 
 def cargar_ingredientes():
@@ -21,7 +22,7 @@ def cargar_ingredientes():
                 row["nombre"],
                 row["tipo"],
                 row["unidad"],
-                float(row["cantidad_disponible"]),
+                float(row["stock"]),
                 float(row["precio_unitario"])
             )
             ingredientes.append(ing)

@@ -1,8 +1,11 @@
-nombre,tipo,unidad,cantidad_disponible,precio_unitario
-Malta Pale,Malta,kg,10,8000
-Malta Caramel Hell,Malta,kg,1,9800
-Lupulo Cascade,Lupulo,g,100,120
-Lupulo Magnum,Lupulo,g,50,140
-Levadura S-04,Levadura,g,22,3000
-Agua,Agua,l,100,1000
-Clarificante,Otros,unidad,3,2000
+nombre,tipo,unidad,stock,precio_unitario
+Malta Pale,Malta,kg,10.0,8000.0
+Malta Caramel Hell,Malta,kg,1.0,9800.0
+Lupulo Cascade,Lupulo,g,100.0,120.0
+Lupulo Magnum,Lupulo,g,50.0,140.0
+Levadura S-04,Levadura,g,22.0,3000.0
+Agua,Agua,l,100.0,1000.0
+Clarificante,Otros,unidad,3.0,2000.0
+Botella 330ml,Stock,unidad,64.0,900.0
+Botella 330ml,Stock,unidad,48.0,930.0
+Botella 330 ml,Stok,unidad,96.0,890.0
