@@ -1,3 +1,5 @@
 nombre_receta,litros_objetivo,fecha,densidad_inicial,densidad_final,litros_embotellados
 IPA Tropical,50.0,2025-07-03,1.04,1.011,48.0
 Pale Ale Honey,50.0,2025-07-03,1.05,1.01,49.0
+Session IPA,50.0,2025-07-05,1.05,1.01,48.0
+Pruebas10,50.0,2025-07-10,1.05,1.01,48.0

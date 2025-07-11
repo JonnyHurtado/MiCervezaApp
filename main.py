@@ -3,7 +3,7 @@ from app.datos import cargar_ingredientes
 from app.logica import crear_lote, crear_receta_desde_consola
 from app.logica import crear_lote_interactivo
 from datetime import date
-from app.logica import crear_lote, crear_receta_desde_consola, mostrar_resumen_lotes
+from app.logica import crear_lote, crear_receta_desde_consola, mostrar_resumen_lotes, mostrar_estadisticas_generales, sincronizar_con_github
 from app.estadisticas import obtener_estadisticas_lotes
 
 
@@ -70,29 +70,45 @@ def crear_lote_interactivo(receta):
 
 def main():
     inventario = cargar_ingredientes()
+
     while True:
         print("\n=== MENÚ CERVECERO ===")
         print("1. Ver ingredientes")
         print("2. Crear receta nueva")
-        print("3. Salir")
-        print("4. Ver resumen de lotes")
-        print("5. Ver estadísticas generales")
+        print("3. Ver resumen de lotes")
+        print("4. Ver estadísticas generales")
+        print("5. Guardar y sincronizar con GitHub")  # si planeas esto
+        print("6. Salir")
+
         opcion = input("Selecciona una opción: ")
 
         if opcion == "1":
             mostrar_ingredientes(inventario)
+            input("\nPresiona ENTER para volver al menú...")
+
         elif opcion == "2":
             receta = crear_receta_desde_consola(inventario)
             crear_lote_interactivo(receta)
+            input("\nPresiona ENTER para volver al menú...")
+
         elif opcion == "3":
+            mostrar_resumen_lotes()
+            input("\nPresiona ENTER para volver al menú...")
+
+        elif opcion == "4":
+            mostrar_estadisticas_generales()
+            input("\nPresiona ENTER para volver al menú...")
+
+        elif opcion == "5":
+            sincronizar_con_github()
+            input("\nPresiona ENTER para volver al menú...")
+
+        elif opcion == "6":
             print("👋 ¡Hasta la próxima cocinada!")
             break
-        elif opcion == "4":
-            mostrar_resumen_lotes()
-        elif opcion == "5":
-            obtener_estadisticas_lotes()
+
         else:
-            print("Opción inválida")
+            print("❌ Opción inválida. Intenta de nuevo.")
 
 if __name__ == "__main__":
     main()

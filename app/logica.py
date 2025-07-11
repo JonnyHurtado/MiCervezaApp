@@ -126,3 +126,42 @@ def crear_lote_interactivo(receta):
     print(f"ABV: {lote.calcular_abv()}%")
     print(f"Costo total: {receta.calcular_costo_total():,.2f}")
     print(f"Costo por litro: {receta.calcular_costo_por_litro():,.2f}")
+
+def mostrar_estadisticas_generales():
+    from app.datos_lotes import cargar_lotes_csv
+
+    lotes = cargar_lotes_csv()
+    if not lotes:
+        print("\n📭 No hay lotes registrados para mostrar estadísticas.")
+        return
+
+    total_lotes = len(lotes)
+    total_litros = sum(l.litros_embotellados for l in lotes)
+    promedio_abv = sum(l.calcular_abv() for l in lotes) / total_lotes
+
+    print("\n📊 ESTADÍSTICAS GENERALES")
+    print("-" * 40)
+    print(f"Total de lotes: {total_lotes}")
+    print(f"Litros totales embotellados: {total_litros}")
+    print(f"ABV promedio: {promedio_abv:.2f}%")
+    print("-" * 40)
+
+import subprocess
+
+def sincronizar_con_github():
+    print("\n🔄 Guardando y sincronizando con GitHub...")
+
+    try:
+        # Agregar todos los cambios
+        subprocess.run(["git", "add", "."], check=True)
+
+        # Confirmar los cambios
+        subprocess.run(["git", "commit", "-m", "sync changes"], check=True)
+
+        # Subir los cambios
+        subprocess.run(["git", "push"], check=True)
+
+        print("✅ Cambios sincronizados con éxito.")
+    except subprocess.CalledProcessError as e:
+        print("❌ Ocurrió un error al sincronizar con GitHub.")
+        print(e)
