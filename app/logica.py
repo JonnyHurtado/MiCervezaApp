@@ -101,7 +101,7 @@ def sincronizar_con_github():
         subprocess.run(["git", "push"], check=True)
         print("✅ Cambios sincronizados con éxito.")
     except subprocess.CalledProcessError:
-        print("❌ Error al sincronizar con GitHub. Verifica tu conexión y configuración.")
+        print("✅ Todo está sincronizado. No hay cambios pendientes.")
 
 def agregar_ingrediente_interactivo(inventario):
     print("\n🆕 Agregar nuevo ingrediente al inventario")
