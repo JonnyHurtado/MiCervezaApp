@@ -106,60 +106,48 @@ def sincronizar_con_github():
 def agregar_ingrediente_interactivo(inventario):
     print("\n🆕 Agregar nuevo ingrediente al inventario")
 
-    # Mostrar ingredientes existentes para evitar duplicados
+    # Verificar si hay ingredientes existentes
     if inventario:
-        print("\n📦 Ingredientes existentes:")
-        for i, ing in enumerate(inventario, start=1):
-            print(f"{i}. {ing.nombre} ({ing.tipo}) - {ing.unidad}, Stock: {ing.stock}")
-    else:
-        print("⚠️ Aún no hay ingredientes en el inventario.")
+        print("\n📋 Ingredientes existentes:")
+        for idx, ing in enumerate(inventario, 1):
+            print(f"{idx}. {ing.nombre} ({ing.tipo}) - {ing.stock} {ing.unidad} - ${ing.precio_unitario} por {ing.unidad}")
+        
+        seleccion = input("\n¿Deseas agregar stock a uno existente? (s/n): ").lower()
 
-    respuesta = input("\n¿Quieres agregar stock a un ingrediente existente? (s/n): ").strip().lower()
+        if seleccion == "s":
+            try:
+                num = int(input("Selecciona el número del ingrediente: "))
+                if 1 <= num <= len(inventario):
+                    ing = inventario[num - 1]
+                    cantidad = float(input(f"Ingresaste cantidad adicional en {ing.unidad}: "))
+                    nuevo_precio = float(input(f"¿Cuál fue el precio por {ing.unidad} esta vez?: "))
 
-    if respuesta == "s":
-        try:
-            seleccion = int(input("Selecciona el número del ingrediente: "))
-            if 1 <= seleccion <= len(inventario):
-                ing = inventario[seleccion - 1]
-                cantidad = float(input(f"Cantidad a sumar a '{ing.nombre}' ({ing.unidad}): "))
-                ing.stock += cantidad
-                datos.guardar_ingredientes(inventario)
-                print(f"✅ Nuevo stock de {ing.nombre}: {ing.stock}")
-                return
-            else:
-                print("❌ Número fuera de rango.")
-                return
-        except ValueError:
-            print("❌ Entrada inválida.")
-            return
+                    # Recalcular precio promedio ponderado
+                    precio_promedio = (
+                        (ing.stock * ing.precio_unitario) + (cantidad * nuevo_precio)
+                    ) / (ing.stock + cantidad)
 
-    # Si desea agregar uno nuevo
-    nombre = input("Nombre del nuevo ingrediente: ").strip()
-    
-    tipos_validos = ["Malta", "Lupulo", "Levadura", "Agua", "ManoObra", "Packing", "Branding", "Energía", "Otros"]
-    print("\nTipos disponibles:")
-    for i, t in enumerate(tipos_validos, start=1):
-        print(f"{i}. {t}")
-    
-    try:
-        tipo_index = int(input("Selecciona el número del tipo: "))
-        tipo = tipos_validos[tipo_index - 1]
-        unidad = input("Unidad de medida (g, kg, l, unidad, etc): ")
-        cantidad = float(input(f"Cantidad inicial ({unidad}): "))
-        precio = float(input(f"Precio por {unidad}: "))
+                    ing.precio_unitario = round(precio_promedio, 2)
+                    ing.stock += cantidad
 
-        # Validar si ya existe un ingrediente con mismo nombre y unidad
-        for ing in inventario:
-            if ing.nombre.lower() == nombre.lower() and ing.unidad == unidad:
-                print("⚠️ Ya existe un ingrediente con ese nombre y unidad.")
-                return
+                    datos.guardar_ingredientes(inventario)
+                    print(f"\n✅ Stock actualizado: {ing.stock} {ing.unidad}")
+                    print(f"💰 Nuevo precio promedio por {ing.unidad}: {ing.precio_unitario}")
+                    return  # salir después de actualizar
+                else:
+                    print("❌ Número fuera de rango.")
+            except ValueError:
+                print("❌ Entrada inválida. Intenta nuevamente.")
 
-        nuevo = Ingrediente(nombre, tipo, unidad, cantidad, precio)
-        inventario.append(nuevo)
-        datos.guardar_ingredientes(inventario)
-        print("✅ Ingrediente agregado exitosamente.")
+    # Si no quiere usar ingrediente existente o no hay ingredientes
+    nombre = input("Nombre del ingrediente: ").strip()
+    tipo = input("Tipo (Malta, Lupulo, Levadura, Agua, ManoObra, Packing, etc): ").strip()
+    unidad = input("Unidad de medida (g, kg, l, unidad, etc): ").strip()
+    cantidad = float(input(f"Cantidad inicial ({unidad}): "))
+    precio = float(input(f"Precio por {unidad}: "))
 
-    except (ValueError, IndexError):
-        print("❌ Entrada inválida.")
+    nuevo = registrar_ingrediente(nombre, tipo, unidad, cantidad, precio)
+    inventario.append(nuevo)
 
-
+    datos.guardar_ingredientes(inventario)
+    print(f"\n✅ Ingrediente '{nombre}' agregado con {cantidad} {unidad} a ${precio} por {unidad}")
